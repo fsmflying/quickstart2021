@@ -5,6 +5,10 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * 客户端
+ *
+ */
 public class SocketIOClient {
     public static void main(String[] args) {
         try {
