@@ -7,7 +7,7 @@ import java.nio.CharBuffer;
 /**
  * 客户端
  */
-public class SocketIOClient {
+public class SocketIOClientCharBuffer {
     public static void main(String[] args) {
         Socket socket = null;
         try {
@@ -23,13 +23,16 @@ public class SocketIOClient {
                 @Override
                 public void run() {
                     String responeMsg = null;
+                    CharBuffer charBuffer = CharBuffer.allocate(2048);
                     while (true) {
                         try {
-                            responeMsg = socketBufferedReader.readLine();
-                            if (!"[[bye]]".equals(responeMsg)) break;
+                            socketBufferedReader.read(charBuffer);
+                            charBuffer.flip();
+                            if (!"[[bye]]".equals(responeMsg =charBuffer.toString())) break;
                             else {
                                 System.out.println(responeMsg);
                             }
+                            charBuffer.compact();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -39,19 +42,23 @@ public class SocketIOClient {
             });
             outputThread.start();
             String line = null;
+            CharBuffer buffer = CharBuffer.allocate(1024);
             while (true) {
-                line = keyboardBufferedReader.readLine();
-                System.out.println("["+line+"]");
-                if(line == null || line.isEmpty()) continue;
+                //line = keyboardBufferedReader.readLine();
+                keyboardBufferedReader.read(buffer);
+                line = buffer.toString();
+
                 if ("[[disc]]".equals(line)) {
                     //通知服务断开连接
-                    socketBufferedWriter.write("[[disc]]\n"); //write keyboard content to socket
+                    socketBufferedWriter.write( "[[disc]]\n"); //write keyboard content to socket
                     socketBufferedWriter.flush();
                     break;
                 } else {
                     //发送消息
-                    socketBufferedWriter.write(line+"\n"); //write keyboard content to socket
+                    buffer.put('\n');
+                    socketBufferedWriter.write(buffer.array());
                     socketBufferedWriter.flush();
+
                 }
             }
         } catch (IOException e) {

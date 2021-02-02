@@ -8,10 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- *
  * strace -ff -o SocketIOServer.log /usr/local/jdk/jdk1.8.0_261/bin/java SocketIOServer
  */
 public class SocketIOServer {
+    public static boolean isReadLine = false;
+
     public static void main(String[] args) {
         ServerSocket serverSocket;
         try {
@@ -24,36 +25,48 @@ public class SocketIOServer {
 
                     @Override
                     public void run() {
-                        InputStream inputStream = null;
-                        OutputStream outputStream = null;
                         try {
-                            inputStream = socket.getInputStream();
-                            outputStream = socket.getOutputStream();
+                            InputStream inputStream = socket.getInputStream();
+                            OutputStream outputStream = socket.getOutputStream();
 
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+                            String stringForTime = null;
+                            while (true) {
+                                String dataLine = null;
+                                try {
+                                    dataLine = bufferedReader.readLine();//阻塞2,等待数据
+                                    if (dataLine == null || dataLine.isEmpty()) continue;
+                                    if ("[[disc]]".equals(dataLine)) {
+                                        bufferedWriter.write("[[bye]]\n");
+                                        bufferedWriter.flush();
+                                        socket.close();
+                                        break;
+                                    } else {
+                                        stringForTime = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").format(Calendar.getInstance().getTime());
+                                        bufferedWriter.write("[" + stringForTime + "][" + dataLine + "]:received\n");
+                                        bufferedWriter.flush();
+                                        System.out.println("[" + stringForTime + "][Receive Message]:" + dataLine);
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-                        String stringForTime = null;
-                        while (true) {
-                            String dataLine = null;
+                        } finally {
                             try {
-                                dataLine = bufferedReader.readLine();//阻塞2,等待数据
-                                stringForTime = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").format(Calendar.getInstance().getTime());
-                                bufferedWriter.write("[" + stringForTime + "][" + dataLine + "]" + ": received!\n");
-                                bufferedWriter.flush();
-                                if (null != dataLine && !"disc".equals(dataLine)) {
-                                    System.out.println("[" + stringForTime + "][Receive Message]:" + dataLine);
-                                } else {
+                                Thread.sleep(5000);
+                                if (socket.isConnected()) {
                                     socket.close();
-                                    break;
                                 }
+                            } catch (InterruptedException interruptedException) {
+                                interruptedException.printStackTrace();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
+
                     }
                 }.run();
             }
