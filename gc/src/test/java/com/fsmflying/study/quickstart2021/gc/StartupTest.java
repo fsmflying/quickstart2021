@@ -1,4 +1,4 @@
-package com.fsmflying.study.quickstart2021;
+package com.fsmflying.study.quickstart2021.gc;
 
 import static org.junit.Assert.assertTrue;
 

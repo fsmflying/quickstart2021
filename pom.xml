@@ -14,8 +14,8 @@
         <module>thread</module>
         <module>common</module>
         <module>netty</module>
-        <module>split-file</module>
         <module>file-split</module>
+        <module>netty3</module>
     </modules>
 
     <name>quickstart2021</name>

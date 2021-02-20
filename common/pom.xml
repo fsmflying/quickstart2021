@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>common</artifactId>
-
+    <version>${parent.version}</version>
     <name>common</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
@@ -29,8 +29,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-
-    </build>
 </project>

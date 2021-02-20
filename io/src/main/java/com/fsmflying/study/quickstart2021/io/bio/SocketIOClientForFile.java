@@ -3,7 +3,6 @@ package com.fsmflying.study.quickstart2021.io.bio;
 import com.fsmflying.study.quickstart2021.PathUtils;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class SocketIOClientForFile {

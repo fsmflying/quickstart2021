@@ -1,4 +1,4 @@
-package com.fsmflying.study.quickstart2021;
+package com.fsmflying.study.quickstart2021.thread;
 
 /**
  * Hello world!
